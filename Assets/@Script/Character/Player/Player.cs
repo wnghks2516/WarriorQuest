@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using WarriorQuest.InputSystem;
 
@@ -41,21 +42,84 @@ namespace WarriorQuest.Character.Player
         protected InputHandler InputHandler;
 
         #endregion
+        //Facing 처리를 위한 Weapon Transform
+        [SerializeField] protected Transform ArmTransform;
+
 
         #region 유니티 생명주기 함수
 
         protected virtual void Awake()
         {
             //초기 체력
-
             CurrentHP = MaxHP;
             //컴포넌트 캐싱
             RB = GetComponent<Rigidbody2D>();
             Anim = GetComponent<Animator>();
             SpriteRenderer = GetComponent<SpriteRenderer>();
             InputHandler = GetComponent<InputHandler>();
+            ArmTransform = transform.Find("Arm");
         }
 
+
+        protected void OnEnable()
+        {
+            //이벤트 구독
+            InputHandler.OnMoveAction += OnMove;
+            InputHandler.OnAttackAction += OnAttack;
+            InputHandler.OnIntractAction += OnIntract;
+        }
+
+
+
+        protected void OnDisable()
+        {
+            //이벤트 구독 해제
+            InputHandler.OnMoveAction -= OnMove;
+            InputHandler.OnAttackAction -= OnAttack;
+            InputHandler.OnIntractAction -= OnIntract;
+        }
         #endregion
+
+        #region 공통 매서드
+
+        private void FlipSprite(bool facingRight)
+        {
+            if (facingRight)
+            {
+                SpriteRenderer.flipX = false;
+                ArmTransform.localRotation = Quaternion.Euler(0, 0, 0);
+            }
+            else
+            {
+                SpriteRenderer.flipX = true;
+                ArmTransform.localRotation = Quaternion.Euler(0, 180, 0);
+            }
+        }
+        #endregion
+
+
+        #region 입력 처리 매서드
+        private void OnMove(Vector2 vector)
+        {
+            if (IsDead) return;
+
+            RB.linearVelocity = vector.normalized * MoveSpeed;
+
+            //방향 전환
+            if(vector.x !=0) FlipSprite(vector.x > 0);
+
+        }
+        private void OnAttack()
+        {
+
+        }
+
+        private void OnIntract(bool obj)
+        {
+            if (IsDead) return;
+        }
+        #endregion
+
     }
+
 }
