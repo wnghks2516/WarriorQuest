@@ -35,6 +35,13 @@ namespace WarriorQuest.InputSystem
         private InputAction IntractAction;
 
 
+        // 이벤트 선언
+
+        public static event Action<Vector2> OnMoveAction;
+        public static event Action OnAttackAction;
+        public static event Action<bool> OnIntractAction;
+
+
         #region 유니티 생명주기 함수
         private void Awake()
         {
@@ -54,7 +61,14 @@ namespace WarriorQuest.InputSystem
             inputSystemAction.Enable();
             MoveAction.performed += OnMove;
             MoveAction.canceled += OnMove;
+
+
+            AttackAction.performed += OnAttack;
+
+            IntractAction.performed += OnIntract;
+            IntractAction.canceled += OnIntract;
         }
+
 
         private void OnDisable()
         {
@@ -62,6 +76,11 @@ namespace WarriorQuest.InputSystem
             inputSystemAction.Disable();
             MoveAction.performed -= OnMove;
             MoveAction.canceled -= OnMove;
+
+            AttackAction.performed -= OnAttack;
+
+            IntractAction.performed -= OnIntract;
+            IntractAction.canceled -= OnIntract;
         }
         #endregion
 
@@ -69,8 +88,29 @@ namespace WarriorQuest.InputSystem
         #region 콜백 매서드
         private void OnMove(InputAction.CallbackContext context)
         {
-            Debug.Log($"Move Input : {context.ReadValue<Vector2>()}");
+            OnMoveAction?.Invoke(context.ReadValue<Vector2>());
         }
+
+        private void OnAttack(InputAction.CallbackContext context)
+        {
+            
+        }
+
+        private void OnIntract(InputAction.CallbackContext context)
+        {
+           
+
+            if (context.phase == InputActionPhase.Performed)
+            {
+                OnIntractAction?.Invoke(true);
+            }
+            else if (context.phase == InputActionPhase.Canceled)
+            {
+                OnIntractAction?.Invoke(false);
+            }
+        }
+
+
         #endregion
 
     }
