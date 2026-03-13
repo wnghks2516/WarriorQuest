@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using WarriorQuest.Character.Interface;
 using WarriorQuest.InputSystem;
 
 namespace WarriorQuest.Character.Player
@@ -11,7 +12,7 @@ namespace WarriorQuest.Character.Player
     [RequireComponent(typeof(InputHandler))]
 
 
-    public abstract class Player : MonoBehaviour
+    public abstract class Player : MonoBehaviour, IDamageable
     {
         #region 기본 스탯
         [Header("기본 스탯")]
@@ -107,6 +108,25 @@ namespace WarriorQuest.Character.Player
                 ArmTransform.localRotation = Quaternion.Euler(0, 180, 0);
             }
         }
+
+        public virtual void TakeDamage(float damage)
+        {
+            if (IsDead) return;
+            CurrentHP -= damage;
+            Anim.SetTrigger(HashHit);
+
+            if (CurrentHP <= 0)
+            {
+                
+                Die();
+            }
+        }
+
+        protected virtual void Die()
+        {
+            CurrentHP = 0;
+            Debug.Log("플레이어 사망");
+        }
         #endregion
 
 
@@ -138,6 +158,10 @@ namespace WarriorQuest.Character.Player
 
         #region 추상 매서드
         protected abstract void Attack();
+
+        
+
+        
         #endregion
 
     }
