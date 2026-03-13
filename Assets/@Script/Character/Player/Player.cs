@@ -11,7 +11,7 @@ namespace WarriorQuest.Character.Player
     [RequireComponent(typeof(InputHandler))]
 
 
-    public class Player : MonoBehaviour
+    public abstract class Player : MonoBehaviour
     {
         #region 기본 스탯
         [Header("기본 스탯")]
@@ -41,10 +41,16 @@ namespace WarriorQuest.Character.Player
         protected SpriteRenderer SpriteRenderer;
         protected InputHandler InputHandler;
 
+     
+
         #endregion
         //Facing 처리를 위한 Weapon Transform
-        [SerializeField] protected Transform ArmTransform;
+        [NonSerialized] protected Transform ArmTransform;
 
+        //애니메이션 파라미터 해시값을 미리 계산
+        protected static readonly int HashIsMoving = Animator.StringToHash("IsMoving");
+        protected static readonly int HashAttack = Animator.StringToHash("Attack");
+        protected static readonly int HashHit = Animator.StringToHash("Hit");
 
         #region 유니티 생명주기 함수
 
@@ -58,15 +64,21 @@ namespace WarriorQuest.Character.Player
             SpriteRenderer = GetComponent<SpriteRenderer>();
             InputHandler = GetComponent<InputHandler>();
             ArmTransform = transform.Find("Arm");
+
+            //Weapon이 Arm설정
+            //ArmTransform = transform.Find("Arm");
         }
 
 
         protected void OnEnable()
         {
             //이벤트 구독
-            InputHandler.OnMoveAction += OnMove;
-            InputHandler.OnAttackAction += OnAttack;
-            InputHandler.OnIntractAction += OnIntract;
+            if (!IsDead)
+            {
+                InputHandler.OnMoveAction += OnMove;
+                InputHandler.OnAttackAction += OnAttack;
+                InputHandler.OnIntractAction += OnIntract;
+            }
         }
 
 
@@ -99,25 +111,33 @@ namespace WarriorQuest.Character.Player
 
 
         #region 입력 처리 매서드
-        private void OnMove(Vector2 vector)
-        {
-            if (IsDead) return;
+        private void OnMove(Vector2 context)
+        { 
 
-            RB.linearVelocity = vector.normalized * MoveSpeed;
+            RB.linearVelocity = context.normalized * MoveSpeed;
 
             //방향 전환
-            if(vector.x !=0) FlipSprite(vector.x > 0);
+            if(context.x !=0) FlipSprite(context.x > 0);
+
+
+            //애니메이션 처리
+            Anim.SetBool(HashIsMoving, context.sqrMagnitude > 0.01f);
 
         }
         private void OnAttack()
         {
-
+            Anim.SetTrigger(HashAttack);
+            Attack();
         }
 
-        private void OnIntract(bool obj)
+        private void OnIntract(bool context)
         {
-            if (IsDead) return;
+            Debug.Log("상호작용 입력 감지: " + context);
         }
+        #endregion
+
+        #region 추상 매서드
+        protected abstract void Attack();
         #endregion
 
     }
