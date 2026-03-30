@@ -53,6 +53,9 @@ namespace WarriorQuest.Character.Player
         protected static readonly int HashAttack = Animator.StringToHash("IsAttack");
         protected static readonly int HashHit = Animator.StringToHash("Hit");
 
+        //마지막 공격시간
+        private float LastAttackTime = 0f;
+
         #region 유니티 생명주기 함수
 
         protected virtual void Awake()
@@ -145,9 +148,13 @@ namespace WarriorQuest.Character.Player
         }
         private void OnAttack()
         {
-            if (IsDead) return;
-            Anim.SetTrigger(HashAttack);
-            Attack();
+            if(Time.time  >= LastAttackTime + AttackCooldown)
+            {
+                LastAttackTime = Time.time;
+                Anim.SetTrigger(HashAttack);
+                Attack();
+            }
+
         }
 
         private void OnIntract(bool context)

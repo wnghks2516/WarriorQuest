@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58401d9b0c984a24cbf3973c1d018850, type: 3}
   m_Name: WarriorSO
   m_EditorClassIdentifier: Assembly-CSharp::WarriorSO
-  maxHealth: 150
+  maxHP: 150
   moveSpeed: 5
   attackDamage: 25
   attackCooldown: 0.7
-  defense: 10
+  defense: 5

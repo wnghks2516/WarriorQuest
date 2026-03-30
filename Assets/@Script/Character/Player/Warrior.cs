@@ -29,10 +29,22 @@ namespace WarriorQuest.Character.Player
         #endregion
 
 
+        #region 공격 및 데미지 처리
+
         protected override void Attack()
         {
             Debug.Log("Warrior Attack!");
         }
+
+        //애니메이션의 이벤트에서 호출할 매서드
+        public void OnAttackAnimEvent()
+        {
+            //실제 공격 처리 로직
+            Debug.Log("Warrior OnAttackAnimEvent! 실제 공격 처리 로직 실행");
+        }
+
+        #endregion
+
 
         public override void TakeDamage(float damage)
         {
