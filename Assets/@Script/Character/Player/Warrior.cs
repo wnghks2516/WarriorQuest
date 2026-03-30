@@ -44,8 +44,6 @@ namespace WarriorQuest.Character.Player
         }
 
         #endregion
-
-
         public override void TakeDamage(float damage)
         {
             //방어력 적용
