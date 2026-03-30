@@ -16,8 +16,8 @@ namespace WarriorQuest.Character.Player
     {
         #region 기본 스탯
         [Header("기본 스탯")]
-        [SerializeField] protected float MaxHP = 100f;
-        [SerializeField] protected float CurrentHP = 100f;
+        [SerializeField] protected float MaxHP = 150f;
+        [SerializeField] protected float CurrentHP = 150f;
         [SerializeField] protected float MoveSpeed = 5f;
         [SerializeField] protected float AttackDamage = 20f;
         [SerializeField] protected float AttackCooldown = .5f;
@@ -46,11 +46,11 @@ namespace WarriorQuest.Character.Player
 
         #endregion
         //Facing 처리를 위한 Weapon Transform
-        [NonSerialized] protected Transform ArmTransform;
+        [NonSerialized] protected Transform weaponArm;
 
         //애니메이션 파라미터 해시값을 미리 계산
         protected static readonly int HashIsMoving = Animator.StringToHash("IsMoving");
-        protected static readonly int HashAttack = Animator.StringToHash("Attack");
+        protected static readonly int HashAttack = Animator.StringToHash("IsAttack");
         protected static readonly int HashHit = Animator.StringToHash("Hit");
 
         #region 유니티 생명주기 함수
@@ -64,10 +64,9 @@ namespace WarriorQuest.Character.Player
             Anim = GetComponent<Animator>();
             SpriteRenderer = GetComponent<SpriteRenderer>();
             InputHandler = GetComponent<InputHandler>();
-            ArmTransform = transform.Find("Arm");
 
             //Weapon이 Arm설정
-            //ArmTransform = transform.Find("Arm");
+            weaponArm = transform.Find("Arm");
         }
 
 
@@ -100,12 +99,12 @@ namespace WarriorQuest.Character.Player
             if (facingRight)
             {
                 SpriteRenderer.flipX = false;
-                ArmTransform.localRotation = Quaternion.Euler(0, 0, 0);
+                weaponArm.localRotation = Quaternion.Euler(0, 0, 0);
             }
             else
             {
                 SpriteRenderer.flipX = true;
-                ArmTransform.localRotation = Quaternion.Euler(0, 180, 0);
+                weaponArm.localRotation = Quaternion.Euler(0, 180, 0);
             }
         }
 
@@ -146,6 +145,7 @@ namespace WarriorQuest.Character.Player
         }
         private void OnAttack()
         {
+            if (IsDead) return;
             Anim.SetTrigger(HashAttack);
             Attack();
         }

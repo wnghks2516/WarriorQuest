@@ -93,7 +93,7 @@ namespace WarriorQuest.InputSystem
 
         private void OnAttack(InputAction.CallbackContext context)
         {
-            
+            OnAttackAction?.Invoke();
         }
 
         private void OnIntract(InputAction.CallbackContext context)
