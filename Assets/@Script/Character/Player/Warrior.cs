@@ -20,11 +20,9 @@ namespace WarriorQuest.Character.Player
             MoveSpeed = warriorSO.moveSpeed;
             AttackDamage = warriorSO.attackDamage;
             AttackCooldown = warriorSO.attackCooldown;
-            
-    
+            CurrentHP = MaxHP;
 
             Debug.Log($"Warrior Awake! 방어력 :{warriorSO.defense} ");
-            base.Awake();
         }
         #endregion
 
@@ -49,7 +47,7 @@ namespace WarriorQuest.Character.Player
             //방어력 적용
             float ActualDamage = Mathf.Max(damage - warriorSO.defense, 5f); // 방어력을 고려한 실제 데미지 계산
             Debug.Log($"Warrior takes {ActualDamage} damage after defense!");
-            base.TakeDamage(damage);
+            base.TakeDamage(ActualDamage);
         }
     }
 }

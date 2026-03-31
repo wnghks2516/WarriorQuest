@@ -70,18 +70,19 @@ namespace WarriorQuest.Character.Player
 
             //Weapon이 Arm설정
             weaponArm = transform.Find("Arm");
+            if (weaponArm == null)
+            {
+                Debug.LogWarning($"[{gameObject.name}] 'Arm' child transform not found!");
+            }
         }
 
 
         protected void OnEnable()
         {
             //이벤트 구독
-            if (!IsDead)
-            {
-                InputHandler.OnMoveAction += OnMove;
-                InputHandler.OnAttackAction += OnAttack;
-                InputHandler.OnIntractAction += OnIntract;
-            }
+            InputHandler.OnMoveAction += OnMove;
+            InputHandler.OnAttackAction += OnAttack;
+            InputHandler.OnIntractAction += OnIntract;
         }
 
 
@@ -97,17 +98,19 @@ namespace WarriorQuest.Character.Player
 
         #region 공통 매서드
 
-        private void FlipSprite(bool facingRight)
+        protected void FlipSprite(bool facingRight)
         {
             if (facingRight)
             {
                 SpriteRenderer.flipX = false;
-                weaponArm.localRotation = Quaternion.Euler(0, 0, 0);
+                if (weaponArm != null)
+                    weaponArm.localRotation = Quaternion.Euler(0, 0, 0);
             }
             else
             {
                 SpriteRenderer.flipX = true;
-                weaponArm.localRotation = Quaternion.Euler(0, 180, 0);
+                if (weaponArm != null)
+                    weaponArm.localRotation = Quaternion.Euler(0, 180, 0);
             }
         }
 
@@ -128,6 +131,14 @@ namespace WarriorQuest.Character.Player
         {
             CurrentHP = 0;
             Debug.Log("플레이어 사망");
+            
+            // 입력 이벤트 구독 해제
+            InputHandler.OnMoveAction -= OnMove;
+            InputHandler.OnAttackAction -= OnAttack;
+            InputHandler.OnIntractAction -= OnIntract;
+            
+            // Rigidbody 정지
+            RB.linearVelocity = Vector2.zero;
         }
         #endregion
 
